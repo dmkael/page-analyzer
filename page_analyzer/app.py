@@ -10,4 +10,4 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 @app.route('/')
 def hello():
-    return f"Hello, world {os.getenv('SECRET_KEY')}"
+    return "Hello, world"
