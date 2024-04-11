@@ -17,7 +17,11 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 def connect_to_db(db_url):
-    return psycopg2.connect(db_url)
+    try:
+        conn = psycopg2.connect(db_url)
+        return conn
+    except ConnectionError:
+        raise ConnectionError('Connect to DB is failed')
 
 
 def flash_url_errors(url):
