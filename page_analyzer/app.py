@@ -9,8 +9,14 @@ import os
 import psycopg2
 
 load_dotenv()
+keepalive = {
+    "keepalives": 1,
+    "keepalives_idle": 30,
+    "keepalives_interval": 5,
+    "keepalives_count": 5,
+}
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL)
+conn = psycopg2.connect(DATABASE_URL, **keepalive)
 
 
 app = Flask(__name__)
