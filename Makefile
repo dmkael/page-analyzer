@@ -9,3 +9,11 @@ start:
 	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 lint:
 	poetry run flake8 page_analyzer
+schema-load:
+	psql page_analyzer < database.sql
+db-reset:
+	dropdb page_analyzer
+	createdb page_analyzer
+full-rebuild: db-reset schema-load
+build:
+	./build.sh
