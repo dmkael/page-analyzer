@@ -9,18 +9,15 @@ import os
 import psycopg2
 
 load_dotenv()
-keepalive = {
-    "keepalives": 1,
-    "keepalives_idle": 30,
-    "keepalives_interval": 5,
-    "keepalives_count": 5,
-}
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL, **keepalive)
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+
+def connect_to_db(db_url):
+    return psycopg2.connect(db_url)
 
 
 def flash_url_errors(url):
@@ -36,6 +33,7 @@ def flash_url_errors(url):
 
 
 def get_all_urls_from_db():
+    conn = connect_to_db(DATABASE_URL)
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute('SELECT * FROM urls')
         all_urls = cursor.fetchall()
@@ -43,6 +41,7 @@ def get_all_urls_from_db():
 
 
 def get_url_from_db(url_id):
+    conn = connect_to_db(DATABASE_URL)
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute('SELECT * FROM urls WHERE id=%s', (url_id,))
         url_from_db = cursor.fetchone()
@@ -50,6 +49,7 @@ def get_url_from_db(url_id):
 
 
 def find_url_in_db(url):
+    conn = connect_to_db(DATABASE_URL)
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute('SELECT * FROM urls WHERE name=%s', (url,))
         url_from_db = cursor.fetchone()
@@ -57,6 +57,7 @@ def find_url_in_db(url):
 
 
 def save_url_into_db(url):
+    conn = connect_to_db(DATABASE_URL)
     with conn.cursor() as cursor:
         cursor.execute(
             '''INSERT INTO urls (name, created_at)
