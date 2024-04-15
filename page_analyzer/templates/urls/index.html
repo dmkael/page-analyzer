@@ -13,12 +13,12 @@
       </tr>
     </thead>
       <tbody>
-      {% for site in sites %}
+      {% for url in urls %}
       <tr>
-        <td>{{ site.id }}</td>
-        <td><a href="{{ url_for('get_url', url_id=site.id) }}">{{ site.name }}</a></td>
-        <td></td>
-        <td></td>
+        <td>{{ url.id }}</td>
+        <td><a href="{{ url_for('get_url', url_id=url.id) }}">{{ url.name }}</a></td>
+        <td>{{ url.last_check.date() if url.last_check else '' }}</td>
+        <td>{{ url.status_code or '' }}</td>
       </tr>
       {% endfor %}
       </tbody>
