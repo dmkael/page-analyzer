@@ -15,7 +15,8 @@ class UrlRepo:
             raise Exception('Unable connect to DB')
 
     def get_urls_data(self):
-        with self.connect().cursor(cursor_factory=NamedTupleCursor) as cursor:
+        conn = self.connect()
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('''
                 SELECT
                     urls.id AS id,
@@ -34,13 +35,15 @@ class UrlRepo:
             return all_urls_data
 
     def get_url_data(self, url_id):
-        with self.connect().cursor(cursor_factory=NamedTupleCursor) as cursor:
+        conn = self.connect()
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('SELECT * FROM urls WHERE id=%s', (url_id, ))
             url_from_db = cursor.fetchone()
             return url_from_db
 
     def get_url_checks(self, url_id):
-        with self.connect().cursor(cursor_factory=NamedTupleCursor) as cursor:
+        conn = self.connect()
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('''
                 SELECT
                     id,
@@ -56,23 +59,26 @@ class UrlRepo:
             return url_checks
 
     def find_url(self, url):
-        with self.connect().cursor(cursor_factory=NamedTupleCursor) as cursor:
+        conn = self.connect()
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('SELECT * FROM urls WHERE name=%s', (url,))
             url_from_db = cursor.fetchone()
             return url_from_db
 
     def save_url(self, url):
-        with self.connect().cursor() as cursor:
+        conn = self.connect()
+        with conn.cursor() as cursor:
             cursor.execute(
                 '''INSERT INTO urls (name, created_at)
                 VALUES (%s, %s)''',
                 (url, datetime.now()))
-            self.connect().commit()
+            conn.commit()
 
     def create_url_check(self, url_id):
-        with self.connect().cursor() as cursor:
+        conn = self.connect()
+        with conn.cursor() as cursor:
             cursor.execute(
                 '''INSERT INTO url_checks (url_id, created_at)
                 VALUES (%s, %s)''',
                 (url_id, datetime.now()))
-            self.connect().commit()
+            conn.commit()
