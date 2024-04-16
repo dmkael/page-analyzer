@@ -34,7 +34,7 @@ def main():
     return render_template(
         'index.html',
         messages=[]
-    )
+    ), 200
 
 
 @app.post('/urls')
@@ -42,21 +42,25 @@ def post_url():
     data = request.form.to_dict()
     url = data.get('url').lower()
     flash_url_errors(url)
+
     errors = get_flashed_messages(with_categories=True)
     if errors:
         return render_template(
             'index.html',
             messages=errors
-        )
+        ), 422
+
     parsed_url = urlparse(url)
     new_url = urlunparse((parsed_url.scheme, parsed_url.netloc, '', '', '', ''))
-    exist_url = repo.find_url(new_url)
+
+    exist_url = repo.get_url_by_name(new_url)
     if exist_url:
         flash('Cтраница уже существует', 'info')
         return redirect(url_for('get_url', url_id=exist_url.id), 302)
+
     repo.save_url(new_url)
     flash('Cтраница успешно добавлена', 'success')
-    new_url = repo.find_url(new_url)
+    new_url = repo.get_url_by_name(new_url)
     return redirect(url_for('get_url', url_id=new_url.id), 302)
 
 
@@ -66,12 +70,12 @@ def get_urls():
     return render_template(
         'urls/index.html',
         urls=urls
-    )
+    ), 200
 
 
 @app.get('/urls/<int:url_id>')
 def get_url(url_id):
-    url = repo.get_url_data(url_id)
+    url = repo.get_url_by_id(url_id)
     if not url:
         return render_template(
             'not_found.html'
@@ -81,26 +85,21 @@ def get_url(url_id):
         url=url,
         messages=get_flashed_messages(with_categories=True),
         url_checks=repo.get_url_checks(url_id)
-    )
+    ), 200
 
 
 @app.post('/urls/<int:url_id>/checks')
 def post_check(url_id):
-    url = repo.get_url_data(url_id)
+    url = repo.get_url_by_id(url_id)
     try:
-        data = requests.get(url.name, timeout=5)
-    except requests.exceptions.ConnectionError:
+        response = requests.get(url.name, timeout=5)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
-        return redirect(url_for('get_url', url_id=url_id))
-    except requests.exceptions.ReadTimeout:
-        flash('Превышен интервал ожидания при проверке', 'danger')
-        return redirect(url_for('get_url', url_id=url_id))
-    if data.status_code > 299 or data.status_code < 200:
-        flash('Произошла ошибка при проверке', 'danger')
-        return redirect(url_for('get_url', url_id=url_id))
-    repo.create_url_check(url_id, data.status_code)
+        return redirect(url_for('get_url', url_id=url_id), 302)
+    repo.save_url_check(url_id, response.status_code)
     flash('Cтраница успешно проверена', 'success')
-    return redirect(url_for('get_url', url_id=url_id))
+    return redirect(url_for('get_url', url_id=url_id), 302)
 
 
 @app.errorhandler(404)

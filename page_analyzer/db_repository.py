@@ -34,7 +34,7 @@ class UrlRepo:
             all_urls_data = cursor.fetchall()
             return all_urls_data
 
-    def get_url_data(self, url_id):
+    def get_url_by_id(self, url_id):
         conn = self.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('SELECT * FROM urls WHERE id=%s', (url_id, ))
@@ -58,7 +58,7 @@ class UrlRepo:
             url_checks = cursor.fetchall()
             return url_checks
 
-    def find_url(self, url):
+    def get_url_by_name(self, url):
         conn = self.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('SELECT * FROM urls WHERE name=%s', (url,))
@@ -74,7 +74,7 @@ class UrlRepo:
                 (url, datetime.now()))
             conn.commit()
 
-    def create_url_check(self, url_id, status_code):
+    def save_url_check(self, url_id, status_code):
         conn = self.connect()
         with conn.cursor() as cursor:
             cursor.execute(
