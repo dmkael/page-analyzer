@@ -67,13 +67,16 @@ class UrlRepo:
 
     def save_url(self, url):
         conn = self.connect()
-        with conn.cursor() as cursor:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute(
                 '''INSERT INTO urls (name, created_at)
-                VALUES (%s, %s)''',
+                VALUES (%s, %s)
+                RETURNING id''',
                 (url, datetime.utcnow())
             )
+            new_record = cursor.fetchone()
             conn.commit()
+            return new_record.id
 
     def save_url_check(self, url_id, tags_data, status_code):
         conn = self.connect()

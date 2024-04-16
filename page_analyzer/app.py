@@ -62,10 +62,9 @@ def post_url():
         flash('Страница уже существует', 'info')
         return redirect(url_for('get_url', url_id=exist_url.id), 302)
 
-    repo.save_url(new_url)
+    new_id = repo.save_url(new_url)
     flash('Страница успешно добавлена', 'success')
-    new_url = repo.get_url_by_name(new_url)
-    return redirect(url_for('get_url', url_id=new_url.id), 302)
+    return redirect(url_for('get_url', url_id=new_id), 302)
 
 
 @app.get('/urls')
