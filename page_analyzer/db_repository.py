@@ -74,11 +74,11 @@ class UrlRepo:
                 (url, datetime.now()))
             conn.commit()
 
-    def create_url_check(self, url_id):
+    def create_url_check(self, url_id, status_code):
         conn = self.connect()
         with conn.cursor() as cursor:
             cursor.execute(
-                '''INSERT INTO url_checks (url_id, created_at)
-                VALUES (%s, %s)''',
-                (url_id, datetime.now()))
+                '''INSERT INTO url_checks (url_id, status_code, created_at)
+                VALUES (%s, %s, %s)''',
+                (url_id, status_code, datetime.now()))
             conn.commit()

@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask import flash, get_flashed_messages
 from validators.url import url as url_validator
 from urllib.parse import urlparse, urlunparse
+import requests
 from dotenv import load_dotenv
-from .db_repository import UrlRepo
+from page_analyzer.db_repository import UrlRepo
 import os
 
 
@@ -39,7 +40,7 @@ def main():
 @app.post('/urls')
 def post_url():
     data = request.form.to_dict()
-    url = data.get('url')
+    url = data.get('url').lower()
     flash_url_errors(url)
     errors = get_flashed_messages(with_categories=True)
     if errors:
@@ -85,8 +86,21 @@ def get_url(url_id):
 
 @app.post('/urls/<int:url_id>/checks')
 def post_check(url_id):
-    repo.create_url_check(url_id)
-    return redirect(url_for('get_url', url_id=url_id), 302)
+    url = repo.get_url_data(url_id)
+    try:
+        data = requests.get(url.name, timeout=5)
+    except requests.exceptions.ConnectionError:
+        flash('Произошла ошибка при проверке', 'danger')
+        return redirect(url_for('get_url', url_id=url_id))
+    except requests.exceptions.ReadTimeout:
+        flash('Превышен интервал ожидания при проверке', 'danger')
+        return redirect(url_for('get_url', url_id=url_id))
+    if data.status_code > 299 or data.status_code < 200:
+        flash('Произошла ошибка при проверке', 'danger')
+        return redirect(url_for('get_url', url_id=url_id))
+    repo.create_url_check(url_id, data.status_code)
+    flash('Cтраница успешно проверена', 'success')
+    return redirect(url_for('get_url', url_id=url_id))
 
 
 @app.errorhandler(404)
