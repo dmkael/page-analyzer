@@ -59,11 +59,11 @@ def post_url():
     exist_url = repo.get_url_by_name(new_url)
 
     if exist_url:
-        flash('Cтраница уже существует', 'info')
+        flash('Страница уже существует', 'info')
         return redirect(url_for('get_url', url_id=exist_url.id), 302)
 
     repo.save_url(new_url)
-    flash('Cтраница успешно добавлена', 'success')
+    flash('Страница успешно добавлена', 'success')
     new_url = repo.get_url_by_name(new_url)
     return redirect(url_for('get_url', url_id=new_url.id), 302)
 
@@ -118,7 +118,7 @@ def post_url_check(url_id):
         return redirect(url_for('get_url', url_id=url_id), 302)
     tags_data = extract_tags_data(response.content)
     repo.save_url_check(url_id, tags_data, response.status_code)
-    flash('Cтраница успешно проверена', 'success')
+    flash('Страница успешно проверена', 'success')
     return redirect(url_for('get_url', url_id=url_id), 302)
 
 
