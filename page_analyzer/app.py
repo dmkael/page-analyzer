@@ -19,38 +19,15 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 repo = UrlRepo(DATABASE_URL)
 
 
-def flash_url_errors(url):
+def validate_url(url):
     try:
         parsed_url = urlparse(url)
         if all([parsed_url.scheme, parsed_url.netloc]) and len(url) > 255:
-            flash('URL превышает 255 символов', 'error')
-            return
+            return 'URL превышает 255 символов', 'error'
     except ValueError:
-        flash('Некорректный URL', 'error')
+        return 'Некорректный URL', 'error'
     if url_validator(url) is not True:
-        flash('Некорректный URL', 'error')
-
-
-def format_text(text):
-    if not text:
-        return
-    return "{:.<196}".format(text[:193]) if len(text) > 193 else text
-
-
-def extract_tags_data(url):
-    req = requests.get(url)
-    soup = BeautifulSoup(req.content, "html.parser")
-    h1 = soup.h1
-    title = soup.title
-    description = soup.find('meta', attrs={'name': 'description'})
-    tags_data = {"h1": '', "title": '', "description": ''}
-    if h1:
-        tags_data['h1'] = h1.string or ''
-    if title:
-        tags_data['title'] = title.string or ''
-    if description:
-        tags_data['description'] = format_text(description.get('content', ''))
-    return tags_data
+        return 'Некорректный URL', 'error'
 
 
 def get_timezone_delta():
@@ -61,7 +38,7 @@ def get_timezone_delta():
 def main():
     return render_template(
         'index.html',
-        messages=[]
+        messages=()
     ), 200
 
 
@@ -69,13 +46,13 @@ def main():
 def post_url():
     data = request.form.to_dict()
     url = data.get('url').lower()
-    flash_url_errors(url)
-    errors = get_flashed_messages(with_categories=True)
 
+    errors = validate_url(url)
     if errors:
+        flash(*errors)
         return render_template(
             'index.html',
-            messages=errors
+            messages=get_flashed_messages(with_categories=True)
         ), 422
 
     parsed_url = urlparse(url)
@@ -118,6 +95,19 @@ def get_url(url_id):
     ), 200
 
 
+def extract_tags_data(content):
+    soup = BeautifulSoup(content, "html.parser")
+    h1 = soup.h1
+    title = soup.title
+    description = soup.find('meta', attrs={'name': 'description'})
+    tags_data = {
+        'h1': h1.string if h1 else '',
+        'title': title.string if title else '',
+        'description': description.get('content', '') if description else ''
+    }
+    return tags_data
+
+
 @app.post('/urls/<int:url_id>/checks')
 def post_url_check(url_id):
     url = repo.get_url_by_id(url_id)
@@ -127,7 +117,7 @@ def post_url_check(url_id):
     except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url', url_id=url_id), 302)
-    tags_data = extract_tags_data(url.name)
+    tags_data = extract_tags_data(response.content)
     repo.save_url_check(url_id, tags_data, response.status_code)
     flash('Cтраница успешно проверена', 'success')
     return redirect(url_for('get_url', url_id=url_id), 302)
