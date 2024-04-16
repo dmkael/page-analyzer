@@ -1,4 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/dmkael/python-project-83/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/dmkael/python-project-83/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/198b08924883bb5d1b22/maintainability)](https://codeclimate.com/github/dmkael/python-project-83/maintainability)
+[![linter](https://github.com/dmkael/python-project-83/actions/workflows/linter.yml/badge.svg)](https://github.com/dmkael/python-project-83/actions/workflows/linter.yml)
 
-[Project preview link](https://python-project-83-2ssw.onrender.com)
+[Page Analizer](https://python-project-83-2ssw.onrender.com)
