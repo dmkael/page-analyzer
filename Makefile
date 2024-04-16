@@ -11,9 +11,9 @@ lint:
 	poetry run flake8 page_analyzer
 schema-load:
 	psql page_analyzer < database.sql
-db-reset:
+db-drop:
 	dropdb page_analyzer
 	createdb page_analyzer
-full-rebuild: db-reset schema-load
+db-rebuild: db-drop schema-load
 build:
 	./build.sh

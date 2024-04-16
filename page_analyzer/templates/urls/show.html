@@ -28,7 +28,7 @@
             </tr>
             <tr>
               <td>Дата создания</td>
-              <td>{{ url.created_at.date() }}</td>
+              <td>{{ (url.created_at + time_delta).date() }}</td>
             </tr>
         </tbody>
       </table>
@@ -58,7 +58,7 @@
                         <td>{{ url_check.h1 or '' }}</td>
                         <td>{{ url_check.title or '' }}</td>
                         <td>{{ url_check.description or '' }}</td>
-                        <td>{{ url_check.created_at.date() }}</td>
+                        <td>{{ (url_check.created_at + time_delta).date() }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}

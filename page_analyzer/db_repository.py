@@ -37,9 +37,9 @@ class UrlRepo:
     def get_url_by_id(self, url_id):
         conn = self.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            cursor.execute('SELECT * FROM urls WHERE id=%s', (url_id, ))
-            url_from_db = cursor.fetchone()
-            return url_from_db
+            cursor.execute('SELECT * FROM urls WHERE id=%s', (url_id,))
+            located_url = cursor.fetchone()
+            return located_url
 
     def get_url_checks(self, url_id):
         conn = self.connect()
@@ -54,7 +54,7 @@ class UrlRepo:
                     created_at
                 FROM url_checks
                 WHERE url_id = %s
-                ORDER BY created_at DESC''', (url_id, ))
+                ORDER BY created_at DESC''', (url_id,))
             url_checks = cursor.fetchall()
             return url_checks
 
@@ -62,8 +62,8 @@ class UrlRepo:
         conn = self.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute('SELECT * FROM urls WHERE name=%s', (url,))
-            url_from_db = cursor.fetchone()
-            return url_from_db
+            located_url = cursor.fetchone()
+            return located_url
 
     def save_url(self, url):
         conn = self.connect()
@@ -71,14 +71,29 @@ class UrlRepo:
             cursor.execute(
                 '''INSERT INTO urls (name, created_at)
                 VALUES (%s, %s)''',
-                (url, datetime.now()))
+                (url, datetime.utcnow())
+            )
             conn.commit()
 
-    def save_url_check(self, url_id, status_code):
+    def save_url_check(self, url_id, tags_data, status_code):
         conn = self.connect()
         with conn.cursor() as cursor:
             cursor.execute(
-                '''INSERT INTO url_checks (url_id, status_code, created_at)
-                VALUES (%s, %s, %s)''',
-                (url_id, status_code, datetime.now()))
+                '''INSERT INTO url_checks (
+                    url_id,
+                    h1,
+                    title,
+                    description,
+                    status_code,
+                    created_at)
+                VALUES (%s, %s, %s, %s, %s, %s)''',
+                (
+                    url_id,
+                    tags_data['h1'],
+                    tags_data['title'],
+                    tags_data['description'],
+                    status_code,
+                    datetime.utcnow()
+                )
+            )
             conn.commit()

@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask import flash, get_flashed_messages
 from validators.url import url as url_validator
 from urllib.parse import urlparse, urlunparse
+from datetime import datetime
 import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from page_analyzer.db_repository import UrlRepo
 import os
@@ -29,6 +31,32 @@ def flash_url_errors(url):
         flash('Некорректный URL', 'error')
 
 
+def format_text(text):
+    if not text:
+        return
+    return "{:.<196}".format(text[:193]) if len(text) > 193 else text
+
+
+def extract_tags_data(url):
+    req = requests.get(url)
+    soup = BeautifulSoup(req.content, "html.parser")
+    h1 = soup.h1
+    title = soup.title
+    description = soup.find('meta', attrs={'name': 'description'})
+    tags_data = {"h1": '', "title": '', "description": ''}
+    if h1:
+        tags_data['h1'] = h1.string or ''
+    if title:
+        tags_data['title'] = title.string or ''
+    if description:
+        tags_data['description'] = format_text(description.get('content', ''))
+    return tags_data
+
+
+def get_timezone_delta():
+    return datetime.now() - datetime.utcnow()
+
+
 @app.route('/')
 def main():
     return render_template(
@@ -42,8 +70,8 @@ def post_url():
     data = request.form.to_dict()
     url = data.get('url').lower()
     flash_url_errors(url)
-
     errors = get_flashed_messages(with_categories=True)
+
     if errors:
         return render_template(
             'index.html',
@@ -52,8 +80,8 @@ def post_url():
 
     parsed_url = urlparse(url)
     new_url = urlunparse((parsed_url.scheme, parsed_url.netloc, '', '', '', ''))
-
     exist_url = repo.get_url_by_name(new_url)
+
     if exist_url:
         flash('Cтраница уже существует', 'info')
         return redirect(url_for('get_url', url_id=exist_url.id), 302)
@@ -69,7 +97,8 @@ def get_urls():
     urls = repo.get_urls_data()
     return render_template(
         'urls/index.html',
-        urls=urls
+        urls=urls,
+        time_delta=get_timezone_delta()
     ), 200
 
 
@@ -84,12 +113,13 @@ def get_url(url_id):
         'urls/show.html',
         url=url,
         messages=get_flashed_messages(with_categories=True),
-        url_checks=repo.get_url_checks(url_id)
+        url_checks=repo.get_url_checks(url_id),
+        time_delta=get_timezone_delta()
     ), 200
 
 
 @app.post('/urls/<int:url_id>/checks')
-def post_check(url_id):
+def post_url_check(url_id):
     url = repo.get_url_by_id(url_id)
     try:
         response = requests.get(url.name, timeout=5)
@@ -97,7 +127,8 @@ def post_check(url_id):
     except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url', url_id=url_id), 302)
-    repo.save_url_check(url_id, response.status_code)
+    tags_data = extract_tags_data(url.name)
+    repo.save_url_check(url_id, tags_data, response.status_code)
     flash('Cтраница успешно проверена', 'success')
     return redirect(url_for('get_url', url_id=url_id), 302)
 
