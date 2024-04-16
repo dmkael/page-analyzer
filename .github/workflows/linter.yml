@@ -1,4 +1,4 @@
-name: my-check
+name: linter
 
 on:
   - push
