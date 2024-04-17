@@ -91,7 +91,7 @@
 
   - запустить команду:
   ```
-  python3 $(pip show hexlet-code | grep -oP 'Location: \K.*')/page_analyzer/load_schema.py
+  python3 $(pip show hexlet-code | grep -oP 'Location: \K.*')/page_analyzer/load_db_schema.py
   ```
 
 - __Windows:__
