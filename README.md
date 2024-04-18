@@ -74,7 +74,7 @@
     ```
     echo MY_VAR=VALUE >> $HOME/.bashrc
     ```
-  - задать для системы, указав значение вида KEY=VALUE:
+  - задать для системы, указав значение вида MY_VAR=VALUE:
     ```
     sudo echo MY_VAR=VALUE >> /etc/environment
     ```
@@ -101,9 +101,7 @@
   - запустить команду в __PowerShell__:
   ```
   pip show hexlet-code | ForEach-Object {
-      if ($_ -match 'WARNING: (.*)') {
-          Write-Output "Package hexlet-code not found!"
-      } else {
+      if ($_ -match 'WARNING: (.*)') {} else {
           $_ | Select-String -Pattern 'Location: (.*)' | ForEach-Object {
               if ($_.Matches.Count -gt 0) {
                   $location = $_.Matches[0].Groups[1].Value
