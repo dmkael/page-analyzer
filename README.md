@@ -126,7 +126,7 @@
 
   запуск c использованием __Flask__ с отладкой:
   ```
-  flask --debug --app page_analyzer.app:app  run --port 8000 --host localhost
+  flask --debug --app page_analyzer:app  run --port 8000 --host localhost
   ```
   запуск c использованием __gunicorn__:
   ```
@@ -137,7 +137,7 @@
 
   запуск через __PowerShell__ c использованием __Flask__ с отладкой:
   ```
-  flask --debug --app page_analyzer.app:app  run --port 8000 --host localhost
+  flask --debug --app page_analyzer:app  run --port 8000 --host localhost
   ```
   ОС Windows не поддерживает __gunicorn__, поэтому в качестве альтернативы можете использовать __waitress__:
   ```
@@ -169,4 +169,4 @@
 
 </details>
 
-Вы можете склонировать репозиторий себе и в дальнейшем развернуть его на хостинге. Имеющиеся команды в __Makefile__ могут быть вам полезны в использовании шаблона __database.sql__ для загрузки схемы в базу данных PostgreSQL, а так же в отладке и в сборке. 
+Вы можете клонировать репозиторий себе и в дальнейшем развернуть его на хостинге. Имеющиеся команды в __Makefile__ могут быть вам полезны в использовании шаблона __database.sql__ для загрузки схемы в базу данных PostgreSQL, а так же в отладке и в сборке. 
