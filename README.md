@@ -145,7 +145,7 @@
   ```
   запуск через __PowerShell__ c использованием __waitress__:
   ```
-  if (-not $env:PORT) {$env:PORT = "8000"} waitress-serve --listen=*:$env:PORT page_analyzer.app:app
+  if (-not $env:PORT) {$env:PORT = "8000"} waitress-serve --listen=*:$env:PORT page_analyzer:app
   ```
 
 Остановить сервис можно сочетанием клавиш __CTRL + C__, либо закрытием окна терминала.
