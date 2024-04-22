@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
+    {{ moment.include_moment() }}
+    {{ moment.locale(auto_detect=True) }}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Third project for Hexlet.io">
@@ -23,9 +25,7 @@
     {% block errors %}
       {% if messages %}
         {% for category, message in messages %}
-          {% if category=='error' %}
-          <div class="alert alert-danger" role="alert">{{ message }}</div>
-          {% endif %}
+        <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
         {% endfor %}
       {% endif %}
     {% endblock %}

@@ -8,11 +8,8 @@ class UrlRepo:
         self.database = db_url
 
     def connect(self):
-        try:
-            connection = psycopg2.connect(self.database)
-            return connection
-        except Exception:
-            raise Exception('Unable connect to DB')
+        connection = psycopg2.connect(self.database)
+        return connection
 
     def get_urls_data(self):
         conn = self.connect()

@@ -206,6 +206,21 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flask-moment"
+version = "1.0.5"
+description = "Formatting of dates and times in Flask templates using moment.js."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "Flask-Moment-1.0.5.tar.gz", hash = "sha256:33307ecd4af8290b6df6a9828ff55ac0977d0567817f9bc0f69803d22ed2b55c"},
+    {file = "Flask_Moment-1.0.5-py3-none-any.whl", hash = "sha256:6e7b3eef89e2137bbbee975405f241a68a44edfa34bf052c92d84364992adca6"},
+]
+
+[package.dependencies]
+Flask = "*"
+packaging = ">=14.1"
+
+[[package]]
 name = "gunicorn"
 version = "21.2.0"
 description = "WSGI HTTP Server for UNIX"
@@ -552,4 +567,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a767f8903734a0a887163efc10a633134f5f3fd2fc973db5a802216e1feace6d"
+content-hash = "c3a27cd41918cc404ef869c948d48300f62e0e5b2741fdd622adb801b4dbf524"

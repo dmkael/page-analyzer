@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask import flash, get_flashed_messages
 from validators.url import url as url_validator
 from urllib.parse import urlparse, urlunparse
-from datetime import datetime
+from flask_moment import Moment
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -16,21 +16,16 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 repo = UrlRepo(DATABASE_URL)
+moment = Moment()
+moment.init_app(app)
 
 
 def validate_url(url):
-    try:
-        parsed_url = urlparse(url)
-        if all([parsed_url.scheme, parsed_url.netloc]) and len(url) > 255:
-            return 'URL превышает 255 символов', 'error'
-    except ValueError:
-        return 'Некорректный URL', 'error'
+    parsed_url = urlparse(url)
+    if all([parsed_url.scheme, parsed_url.netloc]) and len(url) > 255:
+        return 'URL превышает 255 символов', 'danger'
     if url_validator(url) is not True:
-        return 'Некорректный URL', 'error'
-
-
-def get_timezone_delta():
-    return datetime.now() - datetime.utcnow()
+        return 'Некорректный URL', 'danger'
 
 
 @app.route('/')
@@ -72,8 +67,7 @@ def get_urls():
     urls = repo.get_urls_data()
     return render_template(
         'urls/index.html',
-        urls=urls,
-        time_delta=get_timezone_delta()
+        urls=urls
     ), 200
 
 
@@ -88,8 +82,7 @@ def get_url(url_id):
         'urls/show.html',
         url=url,
         messages=get_flashed_messages(with_categories=True),
-        url_checks=repo.get_url_checks(url_id),
-        time_delta=get_timezone_delta()
+        url_checks=repo.get_url_checks(url_id)
     ), 200
 
 

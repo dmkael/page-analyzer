@@ -18,7 +18,7 @@
       <tr>
         <td>{{ url.id }}</td>
         <td><a href="{{ url_for('get_url', url_id=url.id) }}">{{ url.name }}</a></td>
-        <td>{{ (url.last_check + time_delta).date() if url.last_check else '' }}</td>
+        <td>{{ moment(url.last_check).format('YYYY-DD-MM') if url.last_check else '' }}</td>
         <td>{{ url.status_code or '' }}</td>
       </tr>
       {% endfor %}

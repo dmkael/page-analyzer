@@ -1,17 +1,4 @@
 {% extends "index.html" %}
-{% block errors %}
-  {% if messages %}
-    {% for category, message in messages %}
-      {% if category=='success' %}
-      <div class="alert alert-success" role="alert">{{ message }}</div>
-      {% elif category=='info' %}
-      <div class="alert alert-info" role="alert">{{ message }}</div>
-      {% elif category=='danger' %}
-      <div class="alert alert-danger" role="alert">{{ message }}</div>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-{% endblock %}
 {% block content %}
 <div class="container-lg mt-3">
   <h1>Сайт: {{ url.name }}</h1>
@@ -28,7 +15,7 @@
             </tr>
             <tr>
               <td>Дата создания</td>
-              <td>{{ (url.created_at + time_delta).date() }}</td>
+              <td>{{ moment(url.created_at).format('YYYY-DD-MM') }}</td>
             </tr>
         </tbody>
       </table>
@@ -58,7 +45,7 @@
                         <td>{{ url_check.h1 or '' }}</td>
                         <td>{{ url_check.title or '' }}</td>
                         <td>{{ url_check.description or '' }}</td>
-                        <td>{{ (url_check.created_at + time_delta).date() }}</td>
+                        <td>{{ moment(url_check.created_at).format('YYYY-DD-MM') }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}
