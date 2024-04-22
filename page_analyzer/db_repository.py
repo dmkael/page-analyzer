@@ -1,9 +1,11 @@
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime, timezone
+from functools import wraps
 import psycopg2
 
 
 def cursor_decorator(func):
+    @wraps(func)
     def wrapper(repo, *args):
         conn = repo.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
