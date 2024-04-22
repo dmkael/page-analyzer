@@ -22,7 +22,7 @@
 </nav>
     </header>
     {% endblock %}
-    {% block errors %}
+    {% block alerts %}
       {% if messages %}
         {% for category, message in messages %}
         <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
