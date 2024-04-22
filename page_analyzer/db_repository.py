@@ -9,7 +9,7 @@ def cursor_decorator(func):
     def wrapper(repo, *args):
         conn = repo.connect()
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            result = func(repo, cursor, *args) if args else func(repo, cursor)
+            result = func(repo, cursor, *args)
             conn.commit()
             return result
     return wrapper
@@ -78,8 +78,8 @@ class UrlRepo:
             RETURNING id''',
             (url, datetime.now(timezone.utc))
         )
-        new_record = cursor.fetchone()
-        return new_record.id
+        saved_url = cursor.fetchone()
+        return saved_url.id
 
     @cursor_decorator
     def save_url_check(self, cursor, url_id, tags_data, status_code):
