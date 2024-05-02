@@ -45,7 +45,7 @@
                         <td>{{ url_check.h1 or '' }}</td>
                         <td>{{ url_check.title or '' }}</td>
                         <td>{{ url_check.description or '' }}</td>
-                        <td>{{ moment(url_check.created_at).format('YYYY-DD-MM') }}</td>
+                        <td>{{ moment(url_check.created_at).format('YYYY-MM-DD') }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}
