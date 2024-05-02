@@ -30,9 +30,10 @@ def validate_url(url):
 
 @app.route('/')
 def main():
+    messages = get_flashed_messages(with_categories=True)
     return render_template(
         'index.html',
-        messages=()
+        messages=messages
     ), 200
 
 
@@ -44,10 +45,7 @@ def post_url():
     errors = validate_url(url)
     if errors:
         flash(*errors)
-        return render_template(
-            'index.html',
-            messages=get_flashed_messages(with_categories=True)
-        ), 422
+        return redirect(url_for('main'), 302)
 
     parsed_url = urlparse(url)
     new_url = urlunparse((parsed_url.scheme, parsed_url.netloc, '', '', '', ''))
