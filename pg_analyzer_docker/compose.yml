@@ -1,0 +1,37 @@
+services:
+
+  db:
+    container_name: page_analyzer_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    image: postgres:14-alpine
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_analyze_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${DB_USER} -d $${DB_NAME}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  web:
+    container_name: page_analyzer_web
+    image: realdmkael/page_analyzer:latest
+    env_file:
+      - .env
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
+    ports:
+      - "8000:8000"
+    command: bash -c "poetry run python -m page_analyzer.load_db_schema && make start"
+
+volumes:
+  pg_analyze_db:
