@@ -31,7 +31,7 @@ services:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
     ports:
       - "8000:8000"
-    command: bash -c "poetry run python -m page_analyzer.load_db_schema && make start"
+    command: bash -c "make schema-load-python && make start"
 
 volumes:
   pg_analyze_db:

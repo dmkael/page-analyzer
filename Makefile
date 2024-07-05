@@ -15,3 +15,5 @@ db-drop:
 db-rebuild: db-drop schema-load
 build:
 	./build.sh
+schema-load-python:
+	poetry run python -m page_analyzer.load_db_schema
