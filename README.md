@@ -181,7 +181,7 @@
 
 - Docker Desktop ([Download](https://www.docker.com/products/docker-desktop/))
     
-1. Скачайте и поместите [docker-compose](blob:https://github.com/ca3cc8b6-ce65-43a7-b910-9aaabe0794fa) файл в любой пустой каталог.
+1. Скачайте и поместите [docker-compose](https://github.com/dmkael/page-analyzer/blob/main/pg_analyzer_docker/compose.yml) файл в любой пустой каталог.
    
    _Вы можете указать своё значение для порта в compose.yml если необходимо_
 3. Создайте __.env__ внутри созданного каталога и укажите 4 переменных окружения в __.env__ файле с помощью любого текстового редактора:
