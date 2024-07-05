@@ -30,7 +30,7 @@ services:
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
     ports:
-      - "8000:8000"
+      - "${SERVICE_PORT}:8000"
     command: bash -c "make schema-load-python && make start"
 
 volumes:
