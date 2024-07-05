@@ -175,7 +175,7 @@
 Так же вы можете запустить сервис через контейнеры Docker.
 
 <details>
-<summary>B. Запуск через Docker</summary>
+<summary>Запуск через Docker</summary>
 
 Системные требования для запуска через Docker:
 
