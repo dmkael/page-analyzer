@@ -8,3 +8,5 @@ dist/
 .coverage
 coverage.xml
 .env
+.dockerignore
+Dockerfile
